@@ -1,1 +1,355 @@
-index.html
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TN வைரல் மீடியா — தமிழக செய்திகள்</title>
+<meta name="description" content="தமிழ்நாடு முழுவதும் நேரலை செய்திகள், மாவட்ட செய்திகள், சினிமா, விளையாட்டு புதுப்பிப்புகள்.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Thambi+2:wght@500;600;700;800&family=Catamaran:wght@400;500;600;700&family=Anek+Tamil:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B1220;
+    --ink-2:#111A2E;
+    --card:#16213A;
+    --line:#28324A;
+    --paper:#E9EDF2;
+    --paper-dim:#9AA7BD;
+    --ticker:#D62828;
+    --ticker-deep:#9C1C1C;
+    --gold:#E8A93A;
+    --gold-soft:#F2C773;
+    --live:#2FA84F;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'Catamaran', sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.brand,.headline{font-family:'Baloo Thambi 2', 'Catamaran', sans-serif;}
+  .meta,.tag,.chip,.clock{font-family:'Anek Tamil','Catamaran',sans-serif;}
+  a{color:inherit;text-decoration:none;}
+  img{display:block;max-width:100%;}
+
+  /* ===== Top bar ===== */
+  .topbar{
+    position:sticky; top:0; z-index:30;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 16px;
+    background:rgba(11,18,32,0.92);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .topbar-left{display:flex; align-items:center; gap:10px;}
+  .menu-btn{
+    width:38px;height:38px;border-radius:10px;background:var(--card);
+    border:1px solid var(--line); display:flex; align-items:center; justify-content:center;
+    color:var(--paper); cursor:pointer;
+  }
+  .brand{font-size:19px; font-weight:700; letter-spacing:.2px; display:flex; align-items:baseline; gap:6px;}
+  .brand .dot{color:var(--gold);}
+  .topbar-right{display:flex; align-items:center; gap:10px;}
+  .search-btn{
+    width:38px;height:38px;border-radius:10px;background:var(--card);
+    border:1px solid var(--line); display:flex; align-items:center; justify-content:center;
+  }
+
+  /* ===== Breaking ticker — signature element ===== */
+  .ticker-band{
+    position:relative;
+    display:flex; align-items:stretch;
+    background:linear-gradient(180deg, var(--ticker) 0%, var(--ticker-deep) 100%);
+    border-bottom:1px solid #7a1414;
+    overflow:hidden;
+  }
+  .ticker-label{
+    flex:0 0 auto;
+    display:flex; align-items:center; gap:6px;
+    padding:8px 12px;
+    font-weight:700; font-size:13px; letter-spacing:.5px;
+    background:#0B1220;
+    color:var(--gold-soft);
+    z-index:2;
+  }
+  .live-dot{
+    width:8px;height:8px;border-radius:50%;
+    background:var(--live);
+    box-shadow:0 0 0 0 rgba(47,168,79,0.6);
+    animation:pulse 1.6s infinite;
+  }
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(47,168,79,.55);}
+    70%{box-shadow:0 0 0 8px rgba(47,168,79,0);}
+    100%{box-shadow:0 0 0 0 rgba(47,168,79,0);}
+  }
+  .ticker-track-wrap{
+    flex:1 1 auto; overflow:hidden; position:relative; display:flex; align-items:center;
+  }
+  .ticker-track{
+    display:flex; gap:48px; white-space:nowrap;
+    padding-left:100%;
+    animation:scroll-left 32s linear infinite;
+    font-weight:600; font-size:14px; color:#FFF3E2;
+  }
+  .ticker-track span::before{content:"●"; color:var(--gold-soft); font-size:8px; margin-inline-end:10px; vertical-align:middle;}
+  @keyframes scroll-left{
+    from{transform:translateX(0);}
+    to{transform:translateX(-100%);}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .ticker-track{animation:none; padding-left:16px;}
+    .live-dot{animation:none;}
+  }
+
+  /* ===== Category chips ===== */
+  .chip-row{
+    display:flex; gap:8px; overflow-x:auto;
+    padding:14px 16px; scrollbar-width:none;
+  }
+  .chip-row::-webkit-scrollbar{display:none;}
+  .chip{
+    flex:0 0 auto;
+    padding:8px 16px; border-radius:999px;
+    background:var(--card); border:1px solid var(--line);
+    font-size:13.5px; font-weight:600; color:var(--paper-dim);
+    white-space:nowrap;
+  }
+  .chip.active{
+    background:var(--gold); color:#221604; border-color:var(--gold);
+  }
+
+  /* ===== Sections ===== */
+  main{padding:4px 16px 40px;}
+  .section-head{
+    display:flex; align-items:center; justify-content:space-between;
+    margin:26px 0 14px;
+  }
+  .section-head h2{
+    font-size:19px; margin:0; font-weight:700;
+    display:flex; align-items:center; gap:8px;
+  }
+  .section-head h2::before{
+    content:""; width:5px; height:20px; border-radius:3px;
+    background:var(--gold); display:inline-block;
+  }
+  .section-head .more{font-size:12.5px; color:var(--paper-dim); font-weight:600;}
+
+  /* ===== Hero ===== */
+  .hero{
+    position:relative; border-radius:18px; overflow:hidden;
+    min-height:230px;
+    background:
+      radial-gradient(120% 100% at 20% 0%, rgba(232,169,58,0.28), transparent 55%),
+      linear-gradient(135deg, #1B2946 0%, #0E1729 70%);
+    border:1px solid var(--line);
+    display:flex; align-items:flex-end;
+    padding:20px;
+  }
+  .hero::after{
+    content:"";
+    position:absolute; inset:0;
+    background:linear-gradient(180deg, transparent 30%, rgba(0,0,0,0.55) 100%);
+  }
+  .hero-content{position:relative; z-index:1;}
+  .tag{
+    display:inline-block; padding:4px 10px; border-radius:6px;
+    background:var(--ticker); color:#fff; font-size:11.5px; font-weight:700;
+    letter-spacing:.3px; margin-bottom:10px;
+  }
+  .hero .headline{
+    font-size:23px; font-weight:700; color:#fff; margin:0 0 8px;
+    line-height:1.35;
+  }
+  .meta{font-size:12.5px; color:var(--paper-dim); display:flex; gap:10px; align-items:center;}
+
+  /* ===== News list/grid ===== */
+  .news-grid{display:flex; flex-direction:column; gap:14px;}
+  .news-card{
+    display:flex; gap:12px;
+    background:var(--card); border:1px solid var(--line);
+    border-radius:var(--radius); padding:12px; align-items:center;
+  }
+  .thumb{
+    flex:0 0 88px; width:88px; height:88px; border-radius:10px;
+    background:linear-gradient(145deg, #24314F, #14203A);
+    position:relative; overflow:hidden;
+  }
+  .thumb::after{
+    content:"தமிழ்";
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    color:var(--paper-dim); font-size:11px; font-weight:600; opacity:.6;
+  }
+  .news-body{flex:1; min-width:0;}
+  .news-body .tag{margin-bottom:6px;}
+  .news-body h3{
+    font-size:15.5px; margin:0 0 6px; font-weight:600; line-height:1.4;
+    color:var(--paper);
+  }
+
+  /* ===== District spotlight ===== */
+  .district-wrap{
+    display:grid; grid-template-columns:1fr 1fr; gap:12px;
+  }
+  .district-card{
+    background:linear-gradient(160deg, var(--card), #101a30);
+    border:1px solid var(--line); border-radius:var(--radius);
+    padding:16px; min-height:96px;
+    display:flex; flex-direction:column; justify-content:space-between;
+  }
+  .district-card h3{margin:0; font-size:16px; font-weight:700; color:var(--gold-soft);}
+  .district-card .count{font-size:12px; color:var(--paper-dim); margin-top:8px;}
+
+  /* ===== Footer ===== */
+  footer{
+    margin-top:36px; padding:26px 16px 40px;
+    border-top:1px solid var(--line);
+    text-align:center;
+  }
+  footer .brand{justify-content:center; margin-bottom:8px;}
+  footer p{color:var(--paper-dim); font-size:12.5px; margin:4px 0;}
+  .social-row{display:flex; gap:10px; justify-content:center; margin-top:14px;}
+  .social-row a{
+    width:34px;height:34px;border-radius:9px; background:var(--card); border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center; font-size:13px; color:var(--paper-dim);
+  }
+
+  :focus-visible{outline:2px solid var(--gold); outline-offset:2px;}
+</style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="menu-btn" aria-label="மெனு">☰</button>
+      <div class="brand">TN <span class="dot">•</span> வைரல் மீடியா</div>
+    </div>
+    <div class="topbar-right">
+      <button class="search-btn" aria-label="தேடல்">🔍</button>
+    </div>
+  </header>
+
+  <div class="ticker-band" role="marquee" aria-label="நேரலை செய்திகள்">
+    <div class="ticker-label"><span class="live-dot"></span> நேரலை</div>
+    <div class="ticker-track-wrap">
+      <div class="ticker-track">
+        <span>தமிழகத்தில் இன்று வானிலை எச்சரிக்கை — மீன்பிடி தொழிலாளர்களுக்கு அறிவுறுத்தல்</span>
+        <span>திண்டிவனம் அருகே புதிய சாலை திட்டப் பணி தொடக்கம்</span>
+        <span>சென்னையில் இன்று போக்குவரத்து நெரிசல் — மாற்று வழி அறிவிப்பு</span>
+        <span>தமிழக அரசு புதிய நல திட்டம் விரைவில் அறிமுகம்</span>
+      </div>
+    </div>
+  </div>
+
+  <nav class="chip-row" aria-label="பிரிவுகள்">
+    <span class="chip active">அனைத்தும்</span>
+    <span class="chip">தமிழ்நாடு</span>
+    <span class="chip">திண்டிவனம்</span>
+    <span class="chip">கடலூர்</span>
+    <span class="chip">விழுப்புரம்</span>
+    <span class="chip">அரசியல்</span>
+    <span class="chip">சினிமா</span>
+    <span class="chip">விளையாட்டு</span>
+    <span class="chip">வணிகம்</span>
+  </nav>
+
+  <main>
+
+    <a class="hero" href="#" aria-label="முதன்மை செய்தி">
+      <div class="hero-content">
+        <span class="tag">தமிழ்நாடு</span>
+        <h1 class="headline">தமிழகம் முழுவதும் பள்ளி, கல்லூரிகளுக்கு புதிய கல்வியாண்டு அட்டவணை வெளியீடு</h1>
+        <div class="meta"><span>கல்வித்துறை செய்திகள்</span><span>•</span><span>சற்றுமுன்</span></div>
+      </div>
+    </a>
+
+    <div class="section-head">
+      <h2>புதிய செய்திகள்</h2>
+      <a class="more" href="#">மேலும் காண்க ›</a>
+    </div>
+
+    <div class="news-grid">
+      <a class="news-card" href="#">
+        <div class="thumb"></div>
+        <div class="news-body">
+          <span class="tag" style="background:#1F3A5F;">வானிலை</span>
+          <h3>வடகிழக்கு பருவமழை — அடுத்த 48 மணி நேரத்தில் மழை வாய்ப்பு</h3>
+          <div class="meta"><span>15 நிமிடங்களுக்கு முன்</span></div>
+        </div>
+      </a>
+      <a class="news-card" href="#">
+        <div class="thumb"></div>
+        <div class="news-body">
+          <span class="tag" style="background:#5F3A1F;">வணிகம்</span>
+          <h3>பொன் விலை இன்று சரிவு — நகை வாங்குவோருக்கு நல்ல வாய்ப்பு</h3>
+          <div class="meta"><span>32 நிமிடங்களுக்கு முன்</span></div>
+        </div>
+      </a>
+      <a class="news-card" href="#">
+        <div class="thumb"></div>
+        <div class="news-body">
+          <span class="tag" style="background:#3A1F5F;">சினிமா</span>
+          <h3>புதிய தமிழ் திரைப்படம் இந்த வெள்ளிக்கிழமை திரையரங்குகளில்</h3>
+          <div class="meta"><span>1 மணி நேரத்திற்கு முன்</span></div>
+        </div>
+      </a>
+      <a class="news-card" href="#">
+        <div class="thumb"></div>
+        <div class="news-body">
+          <span class="tag" style="background:#1F5F3A;">விளையாட்டு</span>
+          <h3>தமிழ்நாடு அணி இன்றிரவு காலிறுதி போட்டியில் மோதல்</h3>
+          <div class="meta"><span>2 மணி நேரத்திற்கு முன்</span></div>
+        </div>
+      </a>
+    </div>
+
+    <div class="section-head">
+      <h2>மாவட்ட செய்திகள்</h2>
+      <a class="more" href="#">அனைத்தும் ›</a>
+    </div>
+
+    <div class="district-wrap">
+      <a class="district-card" href="#">
+        <h3>திண்டிவனம்</h3>
+        <span class="count">8 புதிய செய்திகள்</span>
+      </a>
+      <a class="district-card" href="#">
+        <h3>கடலூர்</h3>
+        <span class="count">5 புதிய செய்திகள்</span>
+      </a>
+      <a class="district-card" href="#">
+        <h3>விழுப்புரம்</h3>
+        <span class="count">6 புதிய செய்திகள்</span>
+      </a>
+      <a class="district-card" href="#">
+        <h3>பாண்டிச்சேரி</h3>
+        <span class="count">3 புதிய செய்திகள்</span>
+      </a>
+    </div>
+
+  </main>
+
+  <footer>
+    <div class="brand">TN <span class="dot">•</span> வைரல் மீடியா</div>
+    <p>தமிழ்நாடு முழுவதும் நேரலை செய்திகள் — நம்பகமான தமிழ் ஊடகம்.</p>
+    <p>© <span id="year"></span> TN Viral Media. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை.</p>
+    <div class="social-row">
+      <a href="#" aria-label="YouTube">▶</a>
+      <a href="#" aria-label="Facebook">f</a>
+      <a href="#" aria-label="Instagram">◎</a>
+      <a href="#" aria-label="WhatsApp">✆</a>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+
+</body>
+</html>
