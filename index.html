@@ -201,14 +201,16 @@
 
     function renderHero(items){
       const wrap = document.getElementById('heroWrap');
-      const featured = items.find(i=>i.featured) || items[0];
+      const idx = items.findIndex(i=>i.featured);
+const heroIdx = idx !== -1 ? idx : 0;
+const featured = items[heroIdx];
       if(!featured){
         wrap.innerHTML = `<div class="hero"><div class="hero-content"><span class="tag">வரவேற்பு</span><h1 class="headline">TN வைரல் மீடியாவிற்கு வரவேற்கிறோம்</h1><p class="meta">முதல் செய்தியை admin panel மூலம் சேர்க்கவும்</p></div></div>`;
         return;
       }
       const img = featured.imageUrl ? `<img class="hero-img" src="${featured.imageUrl}" alt="">` : '';
       wrap.innerHTML = `
-        <a class="hero" href="${featured.link || '#'}" target="_blank" rel="noopener">
+     <a class="hero" href="#" data-idx="${heroIdx}" onclick="handleNewsClick(event,this)">
           ${img}
           <div class="hero-content">
             <span class="tag">${escapeHtml(featured.category || 'செய்தி')}</span>
