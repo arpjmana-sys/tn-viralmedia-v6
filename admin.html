@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — TN வைரல் மீடியா</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Thambi+2:wght@600;700&family=Catamaran:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B1220; --card:#16213A; --line:#28324A;
+    --paper:#E9EDF2; --paper-dim:#9AA7BD;
+    --ticker:#D62828; --gold:#E8A93A; --live:#2FA84F; --radius:12px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--ink); color:var(--paper); font-family:'Catamaran', sans-serif; padding:20px 16px 60px;}
+  h1,h2,.brand{font-family:'Baloo Thambi 2','Catamaran',sans-serif;}
+  .brand{font-size:19px; font-weight:700; margin-bottom:22px;}
+  .brand .dot{color:var(--gold);}
+  label{display:block; font-size:13px; color:var(--paper-dim); margin:14px 0 6px; font-weight:600;}
+  input[type=text], input[type=url], input[type=email], input[type=password], select{
+    width:100%; padding:12px; border-radius:10px; border:1px solid var(--line);
+    background:var(--card); color:var(--paper); font-size:14.5px; font-family:inherit;
+  }
+  .checkrow{display:flex; align-items:center; gap:8px; margin-top:14px;}
+  .checkrow label{margin:0; color:var(--paper);}
+  button{
+    margin-top:20px; width:100%; padding:13px; border-radius:10px; border:none;
+    background:var(--gold); color:#221604; font-weight:700; font-size:15px; cursor:pointer;
+  }
+  button.secondary{background:var(--card); color:var(--paper); border:1px solid var(--line); margin-top:10px;}
+  button.danger{background:var(--ticker); color:#fff; width:auto; padding:6px 12px; font-size:12.5px; margin:0;}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:16px; margin-top:16px;}
+  .status{font-size:13px; color:var(--paper-dim); margin-top:10px; min-height:18px;}
+  .status.ok{color:var(--live);}
+  .status.err{color:var(--ticker);}
+  .list-item{display:flex; justify-content:space-between; align-items:center; gap:10px; padding:12px 0; border-bottom:1px solid var(--line);}
+  .list-item:last-child{border-bottom:none;}
+  .list-item .ti{font-size:14px; font-weight:600; line-height:1.4;}
+  .list-item .cat{font-size:11.5px; color:var(--paper-dim);}
+  #appSection{display:none;}
+  h2{font-size:16px; margin:0 0 4px;}
+</style>
+</head>
+<body>
+
+  <div class="brand">TN <span class="dot">•</span> வைரல் மீடியா — Admin</div>
+
+  <div id="loginSection" class="card">
+    <h2>உள்நுழையவும்</h2>
+    <label for="email">மின்னஞ்சல்</label>
+    <input type="email" id="email" placeholder="ajcreator2026@gmail.com">
+    <label for="password">கடவுச்சொல்</label>
+    <input type="password" id="password" placeholder="••••••••">
+    <button id="loginBtn">உள்நுழைக</button>
+    <div class="status" id="loginStatus"></div>
+  </div>
+
+  <div id="appSection">
+    <div class="card">
+      <h2>புதிய செய்தி சேர்க்க</h2>
+      <label for="title">தலைப்பு</label>
+      <input type="text" id="title" placeholder="செய்தி தலைப்பை உள்ளிடவும்">
+
+      <label for="category">பிரிவு</label>
+      <select id="category">
+        <option>தமிழ்நாடு</option>
+        <option>திண்டிவனம்</option>
+        <option>கடலூர்</option>
+        <option>விழுப்புரம்</option>
+        <option>பாண்டிச்சேரி</option>
+        <option>அரசியல்</option>
+        <option>சினிமா</option>
+        <option>விளையாட்டு</option>
+        <option>வணிகம்</option>
+        <option>வானிலை</option>
+      </select>
+
+      <label for="link">முழு செய்தி Link (URL)</label>
+      <input type="url" id="link" placeholder="https://...">
+
+      <label for="imageUrl">படம் Link (விருப்பம் — காலியாக விடலாம்)</label>
+      <input type="url" id="imageUrl" placeholder="https://...">
+
+      <div class="checkrow">
+        <input type="checkbox" id="breaking">
+        <label for="breaking">நேரலை ticker-ல் காட்டு</label>
+      </div>
+      <div class="checkrow">
+        <input type="checkbox" id="featured">
+        <label for="featured">முதன்மை செய்தியாக (hero) காட்டு</label>
+      </div>
+
+      <button id="addBtn">செய்தியை சேர்க்க</button>
+      <div class="status" id="addStatus"></div>
+    </div>
+
+    <div class="card">
+      <h2>ஏற்கனவே உள்ள செய்திகள்</h2>
+      <div id="listWrap"><div class="status">ஏற்றப்படுகிறது…</div></div>
+    </div>
+
+    <button class="secondary" id="logoutBtn">வெளியேறு</button>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+  <script src="shared.js"></script>
+  <script>
+    const auth = firebase.auth();
+
+    auth.onAuthStateChanged(user => {
+      if(user){
+        document.getElementById('loginSection').style.display = 'none';
+        document.getElementById('appSection').style.display = 'block';
+        loadList();
+      }else{
+        document.getElementById('loginSection').style.display = 'block';
+        document.getElementById('appSection').style.display = 'none';
+      }
+    });
+
+    document.getElementById('loginBtn').addEventListener('click', async () => {
+      const statusEl = document.getElementById('loginStatus');
+      statusEl.textContent = 'சரிபார்க்கப்படுகிறது…';
+      statusEl.className = 'status';
+      try{
+        await auth.signInWithEmailAndPassword(
+          document.getElementById('email').value.trim(),
+          document.getElementById('password').value
+        );
+      }catch(err){
+        statusEl.textContent = 'தவறு: ' + err.message;
+        statusEl.className = 'status err';
+      }
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', () => auth.signOut());
+
+    document.getElementById('addBtn').addEventListener('click', async () => {
+      const statusEl = document.getElementById('addStatus');
+      const title = document.getElementById('title').value.trim();
+      if(!title){ statusEl.textContent = 'தலைப்பு கட்டாயம் தேவை'; statusEl.className='status err'; return; }
+      statusEl.textContent = 'சேமிக்கப்படுகிறது…';
+      statusEl.className = 'status';
+      try{
+        await db.collection(NEWS_COLLECTION).add({
+          title: title,
+          category: document.getElementById('category').value,
+          link: document.getElementById('link').value.trim(),
+          imageUrl: document.getElementById('imageUrl').value.trim(),
+          breaking: document.getElementById('breaking').checked,
+          featured: document.getElementById('featured').checked,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        statusEl.textContent = 'சேமிக்கப்பட்டது ✓';
+        statusEl.className = 'status ok';
+        document.getElementById('title').value = '';
+        document.getElementById('link').value = '';
+        document.getElementById('imageUrl').value = '';
+        document.getElementById('breaking').checked = false;
+        document.getElementById('featured').checked = false;
+        loadList();
+      }catch(err){
+        statusEl.textContent = 'தவறு: ' + err.message;
+        statusEl.className = 'status err';
+      }
+    });
+
+    async function loadList(){
+      const wrap = document.getElementById('listWrap');
+      try{
+        const snap = await db.collection(NEWS_COLLECTION).orderBy('createdAt','desc').limit(30).get();
+        if(snap.empty){ wrap.innerHTML = '<div class="status">இன்னும் செய்திகள் இல்லை</div>'; return; }
+        wrap.innerHTML = snap.docs.map(doc => {
+          const d = doc.data();
+          return `<div class="list-item">
+            <div><div class="ti">${escapeHtml(d.title)}</div><div class="cat">${escapeHtml(d.category||'')}</div></div>
+            <button class="danger" data-id="${doc.id}">நீக்கு</button>
+          </div>`;
+        }).join('');
+        wrap.querySelectorAll('.danger').forEach(btn=>{
+          btn.addEventListener('click', async () => {
+            if(!confirm('இந்த செய்தியை நீக்கவா?')) return;
+            await db.collection(NEWS_COLLECTION).doc(btn.getAttribute('data-id')).delete();
+            loadList();
+          });
+        });
+      }catch(err){
+        wrap.innerHTML = '<div class="status err">தவறு: ' + err.message + '</div>';
+      }
+    }
+  </script>
+</body>
+</html>
