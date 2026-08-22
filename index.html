@@ -248,7 +248,40 @@ const featured = items[heroIdx];
         el.textContent = n + ' செய்திகள்';
       });
     }
+function handleNewsClick(e, el){
+      e.preventDefault();
+      const idx = parseInt(el.getAttribute('data-idx'), 10);
+      const item = (window.__newsItems || [])[idx];
+      if(!item) return;
+      if(item.link){
+        window.open(item.link, '_blank', 'noopener');
+      } else if(item.content){
+        openNewsModal(item);
+      }
+    }
 
+    function openNewsModal(item){
+      document.getElementById('modalTag').textContent = item.category || 'செய்தி';
+      document.getElementById('modalTitle').textContent = item.title || '';
+      document.getElementById('modalMeta').textContent = relTime(item.date);
+      const imgWrap = document.getElementById('modalImgWrap');
+      if(item.imageUrl){
+        imgWrap.innerHTML = `<img src="${item.imageUrl}" alt="">`;
+        imgWrap.style.display = 'block';
+      } else {
+        imgWrap.innerHTML = '';
+        imgWrap.style.display = 'none';
+      }
+      const paras = String(item.content || '').split(/\n+/).filter(Boolean);
+      document.getElementById('modalBody').innerHTML = paras.map(p => `<p>${escapeHtml(p)}</p>`).join('');
+      document.getElementById('newsModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeNewsModal(){
+      document.getElementById('newsModal').classList.remove('open');
+      document.body.style.overflow = '';
+    }
     async function boot(){
       try{
         const [firestoreItems, rssItems] = await Promise.all([
