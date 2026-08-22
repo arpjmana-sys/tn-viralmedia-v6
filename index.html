@@ -289,6 +289,7 @@ function handleNewsClick(e, el){
           withTimeout(fetchPlaylistVideos(), 8000, [])
         ]);
         const all = firestoreItems.concat(rssItems).sort((a,b)=> b.date - a.date);
+        window.__newsItems = all;
         renderTicker(all);
         renderHero(all);
         renderGrid(all);
