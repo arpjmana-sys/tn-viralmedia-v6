@@ -20,6 +20,15 @@ const PLAYLIST_ID = "PLTVAtm990ero";
 const RSS_URL = "https://www.youtube.com/feeds/videos.xml?playlist_id=" + PLAYLIST_ID;
 const CORS_PROXY = "https://api.allorigins.win/raw?url=";
 
+// Races a promise against a timeout so a slow/hanging network call
+// (e.g. the CORS proxy) can never freeze the page forever.
+function withTimeout(promise, ms, fallback){
+  return Promise.race([
+    promise,
+    new Promise(resolve => setTimeout(() => resolve(fallback), ms))
+  ]);
+}
+
 function escapeHtml(str){
   if(!str) return '';
   return str.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -77,7 +86,10 @@ async function fetchFirestoreNews(){
 // converts each <entry> into the same normalised news-item shape.
 async function fetchPlaylistVideos(){
   try{
-    const res = await fetch(CORS_PROXY + encodeURIComponent(RSS_URL));
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 7000);
+    const res = await fetch(CORS_PROXY + encodeURIComponent(RSS_URL), {signal: controller.signal});
+    clearTimeout(timeoutId);
     if(!res.ok) throw new Error('RSS fetch failed: ' + res.status);
     const xmlText = await res.text();
     const xml = new DOMParser().parseFromString(xmlText, 'text/xml');

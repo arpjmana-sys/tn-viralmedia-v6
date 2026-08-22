@@ -106,13 +106,19 @@
     }
 
     async function boot(){
-      const [firestoreItems, rssItems] = await Promise.all([
-        fetchFirestoreNews(),
-        fetchPlaylistVideos()
-      ]);
-      let all = firestoreItems.concat(rssItems).sort((a,b)=> b.date - a.date);
-      if(cat) all = all.filter(i => i.category === cat);
-      renderList(all);
+      try{
+        const [firestoreItems, rssItems] = await Promise.all([
+          withTimeout(fetchFirestoreNews(), 8000, []),
+          withTimeout(fetchPlaylistVideos(), 8000, [])
+        ]);
+        let all = firestoreItems.concat(rssItems).sort((a,b)=> b.date - a.date);
+        if(cat) all = all.filter(i => i.category === cat);
+        renderList(all);
+      }catch(err){
+        console.error('boot failed:', err);
+        const msg = escapeHtml(err && err.message ? err.message : 'தெரியாத பிழை');
+        document.getElementById('newsGrid').innerHTML = `<div class="state-msg">பிழை: ${msg}</div>`;
+      }
     }
     boot();
   </script>

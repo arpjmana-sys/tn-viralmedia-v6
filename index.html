@@ -226,15 +226,24 @@
     }
 
     async function boot(){
-      const [firestoreItems, rssItems] = await Promise.all([
-        fetchFirestoreNews(),
-        fetchPlaylistVideos()
-      ]);
-      const all = firestoreItems.concat(rssItems).sort((a,b)=> b.date - a.date);
-      renderTicker(all);
-      renderHero(all);
-      renderGrid(all);
-      renderDistricts(all);
+      try{
+        const [firestoreItems, rssItems] = await Promise.all([
+          withTimeout(fetchFirestoreNews(), 8000, []),
+          withTimeout(fetchPlaylistVideos(), 8000, [])
+        ]);
+        const all = firestoreItems.concat(rssItems).sort((a,b)=> b.date - a.date);
+        renderTicker(all);
+        renderHero(all);
+        renderGrid(all);
+        renderDistricts(all);
+      }catch(err){
+        console.error('boot failed:', err);
+        const msg = escapeHtml(err && err.message ? err.message : 'தெரியாத பிழை');
+        document.getElementById('tickerTrack').innerHTML = '<span>தரவு ஏற்றுவதில் பிழை</span>';
+        document.getElementById('heroWrap').innerHTML =
+          `<div class="hero"><div class="hero-content"><span class="tag">பிழை</span><h1 class="headline">தரவு ஏற்ற முடியவில்லை</h1><p class="meta">${msg}</p></div></div>`;
+        document.getElementById('newsGrid').innerHTML = `<div class="state-msg">பிழை: ${msg}</div>`;
+      }
     }
     boot();
   </script>
