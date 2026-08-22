@@ -222,20 +222,23 @@ const featured = items[heroIdx];
 
     function renderGrid(items){
       const grid = document.getElementById('newsGrid');
-      const rest = items.slice(1, 11);
-      if(!rest.length){
+     if(items.length <= 1){
+      
         grid.innerHTML = '<div class="state-msg">இன்னும் கூடுதல் செய்திகள் இல்லை</div>';
         return;
       }
-      grid.innerHTML = rest.map(i => `
-        <a class="news-card" href="${i.link || '#'}" target="_blank" rel="noopener">
+      grid.innerHTML = items.slice(1, 11).map((i, n) => {
+    const idx = n + 1;
+    return `
+        <a class="news-card" href="#" data-idx="${idx}" onclick="handleNewsClick(event,this)">
           <div class="thumb">${i.imageUrl ? `<img src="${i.imageUrl}" alt="">` : ''}</div>
           <div class="news-body">
             <span class="tag" style="background:${tagColor(i.category)};">${escapeHtml(i.category || 'செய்தி')}</span>
             <h3>${escapeHtml(i.title)}</h3>
             <div class="meta"><span>${relTime(i.date)}</span></div>
           </div>
-        </a>`).join('');
+        </a>`;
+  }).join('');
     }
 
     function renderDistricts(items){
