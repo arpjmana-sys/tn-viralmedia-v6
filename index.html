@@ -162,6 +162,16 @@
       <a href="#" aria-label="WhatsApp">✆</a>
     </div>
   </footer>
+  <div class="modal-overlay" id="newsModal" onclick="if(event.target===this) closeNewsModal()">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeNewsModal()" aria-label="மூடு">✕</button>
+    <div class="modal-imgwrap" id="modalImgWrap"></div>
+    <span class="tag" id="modalTag"></span>
+    <h2 class="modal-title" id="modalTitle"></h2>
+    <p class="meta" id="modalMeta"></p>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
 
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
