@@ -155,6 +155,7 @@
           category: document.getElementById('category').value,
           link: document.getElementById('link').value.trim(),
           imageUrl: document.getElementById('imageUrl').value.trim(),
+content: document.getElementById('content').value.trim(),
           breaking: document.getElementById('breaking').checked,
           featured: document.getElementById('featured').checked,
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -164,6 +165,7 @@
         document.getElementById('title').value = '';
         document.getElementById('link').value = '';
         document.getElementById('imageUrl').value = '';
+document.getElementById('content').value = '';
         document.getElementById('breaking').checked = false;
         document.getElementById('featured').checked = false;
         loadList();
