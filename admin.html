@@ -167,7 +167,7 @@ let newsCache = {};
       statusEl.className = 'status';
       try{
         const data = {
-          title: title,
+        title: title,
           category: document.getElementById('category').value,
           link: document.getElementById('link').value.trim(),
           imageUrl: document.getElementById('imageUrl').value.trim(),
@@ -177,29 +177,21 @@ let newsCache = {};
         };
         if(editingId){
           await db.collection(NEWS_COLLECTION).doc(editingId).update(data);
-       
         } else {
           data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
           await db.collection(NEWS_COLLECTION).add(data);
-          statusEl.textContent = 'சேமிக்கப்பட்டது ✓';
         }
-          
-          
-          
-          
-
-        
-          
-          
-        
         statusEl.textContent = 'சேமிக்கப்பட்டது ✓';
         statusEl.className = 'status ok';
         document.getElementById('title').value = '';
         document.getElementById('link').value = '';
         document.getElementById('imageUrl').value = '';
-document.getElementById('content').value = '';
+        document.getElementById('content').value = '';
         document.getElementById('breaking').checked = false;
         document.getElementById('featured').checked = false;
+        editingId = null;
+        document.getElementById('addBtn').textContent = 'செய்தியை சேர்க்க';
+        document.getElementById('cancelEditBtn').style.display = 'none';
         loadList();
       }catch(err){
         statusEl.textContent = 'தவறு: ' + err.message;
