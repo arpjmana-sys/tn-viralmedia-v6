@@ -253,6 +253,7 @@ function handleNewsClick(e, el){
       const idx = parseInt(el.getAttribute('data-idx'), 10);
       const item = (window.__newsItems || [])[idx];
       if(!item) return;
+  alert('idx='+idx+' link='+item.link+' content='+item.content);
       if(item.link){
         window.open(item.link, '_blank', 'noopener');
       } else if(item.content){
