@@ -723,7 +723,8 @@
     } else {
       var vid = document.createElement("video");
       vid.src = mediaItem.src || "";
-      vid.autoplay = true; vid.muted = true; vid.loop = true; vid.playsInline = true;
+      vid.autoplay = true; vid.muted = false; vid.loop = true; vid.playsInline = true;
+      vid.play().catch(function(){ vid.muted = true; vid.play(); });
       container.appendChild(vid);
     }
   }
