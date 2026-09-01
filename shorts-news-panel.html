@@ -425,7 +425,7 @@ d-row span{font-size:11px;color:#7f8bab;text-align:center;}
       news: state.news,
       media: state.media.map(function(m){
         if(m.type === "video" && m.sessionOnly){
-          return {id:m.id, type:"video", src:null, name:m.name, sessionOnly:true};
+          return {id:m.id, type:"video", src:null, name:m.name, sessionOnly:true, transform:m.transform};
         }
         return m;
       }),
