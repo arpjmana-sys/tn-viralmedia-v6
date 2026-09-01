@@ -293,6 +293,7 @@ d-row span{font-size:11px;color:#7f8bab;text-align:center;}
   footer.note{
     text-align:center;font-size:10.5px;color:#5c6688;margin-top:10px;line-height:1.6;
   }
+.stage-media{touch-action:none;-webkit-user-select:none;user-select:none;}
 </style>
 </head>
 <body>
@@ -774,6 +775,96 @@ d-row span{font-size:11px;color:#7f8bab;text-align:center;}
     if(timer){ clearInterval(timer); timer = null; }
   }
 
+  
+ 
+ function applyMediaTransform(container, mediaItem){
+    var el = container.querySelector("img,video");
+    if(!el || !mediaItem) return;
+    if(!mediaItem.transform) mediaItem.transform = {scale:1,x:0,y:0};
+    var t = mediaItem.transform;
+    el.style.transformOrigin = "center center";
+    el.style.transform = "translate("+t.x+"px,"+t.y+"px) scale("+t.scale+")";
+  }
+
+  function setupMediaGestures(container, mediaItem){
+    applyMediaTransform(container, mediaItem);
+    container._currentMedia = mediaItem;
+    if(container._pinchReady) return;
+    container._pinchReady = true;
+    var pts = {}, startDist = 0, startScale = 1, startX = 0, startY = 0, startTX = 0, startTY = 0, lastTap = 0;
+    function dist(a,b){ var dx=a.x-b.x, dy=a.y-b.y; return Math.sqrt(dx*dx+dy*dy); }
+    container.addEventListener("touchstart", function(e){
+      var m = container._currentMedia;
+      if(!m) return;
+      for(var i=0;i<e.changedTouches.length;i++){
+        var t = e.changedTouches[i];
+        pts[t.identifier] = {x:t.clientX, y:t.clientY};
+      }
+      var keys = Object.keys(pts);
+      if(keys.length === 1){
+        var now = Date.now();
+        if(now - lastTap < 300){
+          m.transform = {scale:1,x:0,y:0};
+          applyMediaTransform(container, m);
+          save();
+          pts = {};
+          lastTap = 0;
+          return;
+        }
+        lastTap = now;
+        startX = pts[keys[0]].x; startY = pts[keys[0]].y;
+        startTX = m.transform.x; startTY = m.transform.y;
+      } else if(keys.length === 2){
+        startDist = dist(pts[keys[0]], pts[keys[1]]);
+        startScale = m.transform.scale;
+      }
+      e.preventDefault();
+    }, {passive:false});
+    container.addEventListener("touchmove", function(e){
+      var m = container._currentMedia;
+      if(!m) return;
+      for(var i=0;i<e.changedTouches.length;i++){
+        var t = e.changedTouches[i];
+        if(pts[t.identifier]) pts[t.identifier] = {x:t.clientX, y:t.clientY};
+      }
+      var keys = Object.keys(pts);
+      if(keys.length === 1 && pts[keys[0]]){
+        var dx = pts[keys[0]].x - startX;
+        var dy = pts[keys[0]].y - startY;
+        m.transform.x = startTX + dx;
+        m.transform.y = startTY + dy;
+        applyMediaTransform(container, m);
+      } else if(keys.length === 2){
+        var k0 = pts[keys[0]], k1 = pts[keys[1]];
+        if(k0 && k1){
+          var d = dist(k0, k1);
+          var scale = startScale * (d / startDist);
+          scale = Math.max(0.5, Math.min(4, scale));
+          m.transform.scale = scale;
+          applyMediaTransform(container, m);
+        }
+      }
+      e.preventDefault();
+    }, {passive:false});
+    container.addEventListener("touchend", function(e){
+      for(var i=0;i<e.changedTouches.length;i++){
+        delete pts[e.changedTouches[i].identifier];
+      }
+      save();
+    });
+  }
+
+  function fitText(el){
+    el.style.fontSize = "";
+    var baseFont = parseFloat(getComputedStyle(el).fontSize) || 16;
+    var f = baseFont, minFont = 9, guard = 0;
+    el.style.fontSize = f + "px";
+    while(el.scrollHeight > el.clientHeight && f > minFont && guard < 40){
+      f -= 0.5;
+      el.style.fontSize = f + "px";
+      guard++;
+    }
+  } 
   // ---------- UTIL ----------
   function escapeHtml(s){
     return (s || "").replace(/[&<>"']/g, function(c){
