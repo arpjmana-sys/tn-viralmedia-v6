@@ -360,6 +360,34 @@ height:auto;
     <ul class="item-list" id="newsList"></ul>
     <p class="empty-note" id="newsEmpty">இன்னும் செய்தி சேர்க்கப்படவில்லை.</p>
   </div>
+  <!-- TYPOGRAPHY -->
+<div class="card">
+  <h2>🎨 எழுத்துரு அமைப்புகள்</h2>
+
+  <div class="typo-group">
+    <b>தலைப்பு (Headline)</b>
+    <input type="range" id="h1Size" min="0" max="200" value="34">
+    <span id="h1SizeVal">34px</span>
+    <label><input type="checkbox" id="h1Bold" checked> BOLD</label>
+    <div class="color-row" id="h1Colors"></div>
+  </div>
+
+  <div class="typo-group">
+    <b>துணை தலைப்பு (Sub-Heading)</b>
+    <input type="range" id="h2Size" min="0" max="200" value="20">
+    <span id="h2SizeVal">20px</span>
+    <label><input type="checkbox" id="h2Bold"> BOLD</label>
+    <div class="color-row" id="h2Colors"></div>
+  </div>
+
+  <div class="typo-group" style="border-bottom:none;margin-bottom:0;padding-bottom:0;">
+    <b>உரை (Body)</b>
+    <input type="range" id="bSize" min="0" max="200" value="13">
+    <span id="bSizeVal">13px</span>
+    <label><input type="checkbox" id="bBold"> BOLD</label>
+    <div class="color-row" id="bColors"></div>
+  </div>
+</div>
 
   <!-- PHOTOS -->
   <div class="card">
