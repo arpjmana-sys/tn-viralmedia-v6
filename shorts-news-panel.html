@@ -740,7 +740,9 @@ d-row span{font-size:11px;color:#7f8bab;text-align:center;}
     var newsItem = state.news.find(function(n){ return n.id === s.newsId; });
     var mediaItem = state.media.find(function(m){ return m.id === s.mediaId; });
     renderMediaInto(stageMedia, mediaItem);
+    setupMediaGestures(stageMedia, mediaItem);
     stageNewsText.textContent = newsItem ? newsItem.text : "";
+    fitText(stageNewsText);
   }
 
   // ---------- FULLSCREEN BROADCAST ----------
@@ -766,7 +768,9 @@ d-row span{font-size:11px;color:#7f8bab;text-align:center;}
     var newsItem = state.news.find(function(n){ return n.id === s.newsId; });
     var mediaItem = state.media.find(function(m){ return m.id === s.mediaId; });
     renderMediaInto(fsMedia, mediaItem);
+    setupMediaGestures(fsMedia, mediaItem);
     fsNewsText.textContent = newsItem ? newsItem.text : "";
+    fitText(fsNewsText);
   }
 
   function stopBroadcast(){
