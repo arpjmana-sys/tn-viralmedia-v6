@@ -770,13 +770,14 @@ d-row span{font-size:11px;color:#7f8bab;text-align:center;}
     renderMediaInto(fsMedia, mediaItem);
     setupMediaGestures(fsMedia, mediaItem);
     fsNewsText.textContent = newsItem ? newsItem.text : "";
-    alert("TEXT: [" + fsNewsText.textContent + "]");
     fsNewsText.style.background = "red";
 fsNewsText.style.border = "6px solid yellow";
 fsNewsText.style.minHeight = "150px";
 fsNewsText.style.zIndex = "9999";
 fsNewsText.style.position = "relative";
-    alert(JSON.stringify(fsNewsText.getBoundingClientRect()));
+var r = fsNewsText.getBoundingClientRect();
+var cs = getComputedStyle(fsNewsText);
+alert("TEXT:[" + fsNewsText.textContent + "]\nW:" + r.width + " H:" + r.height + " X:" + r.x + " Y:" + r.y + "\nDISPLAY:" + cs.display + " VIS:" + cs.visibility + " OPACITY:" + cs.opacity);
     fitText(fsNewsText);
     //if(newsItem){ setupTextGestures(fsNewsText, newsItem); }
   }
