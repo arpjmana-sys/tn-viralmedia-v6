@@ -268,7 +268,8 @@ d-row span{font-size:11px;color:#7f8bab;text-align:center;}
   /* ---- Fullscreen broadcast overlay ---- */
   .fs-overlay{
     position:fixed;inset:0;background:#000;z-index:999;
-    display:flex;align-items:center;justify-content:center;
+    display:flex;align-items:center;justify-content:center;overflow-y:auto;
+-webkit-overflow-scrolling:touch;
   }
   .fs-overlay.hidden{display:none;}
   .fs-close{
