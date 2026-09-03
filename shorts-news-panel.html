@@ -1024,19 +1024,24 @@ function initTypoControls(){
   buildColorRow("bColors","b");
 }
 
-function renderNewsText(el, text){
+
+    function renderNewsText(el, text){
   text = text || "";
-  var parts = text.split("||").map(function(s){ return s.trim(); });
+  var parts = text.split("||").map(function(s){ return s.trim(); }).filter(function(s){ return s.length>0; });
   var t = state.typo;
   var html = '<div class="news-inner">';
-  if(parts[0]) html += '<div class="news-h1" style="font-size:'+t.h1.size+'px;font-weight:'+(t.h1.bold?800:600)+';color:'+t.h1.color+';">'+escapeHtml(parts[0])+'</div>';
-  if(parts[1]) html += '<div class="news-h2" style="font-size:'+t.h2.size+'px;font-weight:'+(t.h2.bold?800:600)+';color:'+t.h2.color+';">'+escapeHtml(parts[1])+'</div>';
-  if(parts[2]) html += '<div class="news-b" style="font-size:'+t.b.size+'px;font-weight:'+(t.b.bold?800:500)+';color:'+t.b.color+';">'+escapeHtml(parts[2])+'</div>';
-  if(parts.length === 1) html += '<div class="news-b" style="font-size:'+t.b.size+'px;font-weight:'+(t.b.bold?800:500)+';color:'+t.b.color+';">'+escapeHtml(parts[0])+'</div>';
+  if(parts.length === 1){
+    html += '<div class="news-b" style="font-size:'+t.b.size+'px;font-weight:'+(t.b.bold?800:500)+';color:'+t.b.color+';">'+escapeHtml(parts[0])+'</div>';
+  } else {
+    if(parts[0]) html += '<div class="news-h1" style="font-size:'+t.h1.size+'px;font-weight:'+(t.h1.bold?800:600)+';color:'+t.h1.color+';">'+escapeHtml(parts[0])+'</div>';
+    if(parts[1]) html += '<div class="news-h2" style="font-size:'+t.h2.size+'px;font-weight:'+(t.h2.bold?800:600)+';color:'+t.h2.color+';">'+escapeHtml(parts[1])+'</div>';
+    if(parts[2]) html += '<div class="news-b" style="font-size:'+t.b.size+'px;font-weight:'+(t.b.bold?800:500)+';color:'+t.b.color+';">'+escapeHtml(parts[2])+'</div>';
+  }
   html += '</div>';
   el.innerHTML = html;
-}function fitText(el){
-    el.style.fontSize = "";
+}
+
+function fitText(el){el.style.fontSize = "";
     var baseFont = parseFloat(getComputedStyle(el).fontSize) || 16;
     var f = baseFont, minFont = 9, guard = 0;
     el.style.fontSize = f + "px";
