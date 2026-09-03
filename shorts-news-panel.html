@@ -976,6 +976,65 @@ function setupTextGestures(el, item){
     }
     save();
   });
+}
+  var TYPO_COLORS = ["#ff3b3b","#ffcf40","#3ddc84","#39c0ff","#c25bff","#ffffff","#000000","#ff8a00","#00d1b2","#ff5da2","#7c8cff","#d4d4d4"];
+
+if(!state.typo) state.typo = {
+  h1:{size:34,bold:true,color:"#ff3b3b"},
+  h2:{size:20,bold:false,color:"#ff3b3b"},
+  b:{size:13,bold:false,color:"#ff3b3b"}
+};
+
+function buildColorRow(containerId, key){
+  var row = document.getElementById(containerId);
+  if(!row) return;
+  row.innerHTML = "";
+  TYPO_COLORS.forEach(function(c){
+    var sw = document.createElement("span");
+    sw.className = "sw" + (state.typo[key].color === c ? " active" : "");
+    sw.style.background = c;
+    sw.addEventListener("click", function(){
+      state.typo[key].color = c;
+      buildColorRow(containerId, key);
+      save(); renderStage();
+    });
+    row.appendChild(sw);
+  });
+}
+
+function initTypoControls(){
+  var h1Size = document.getElementById("h1Size"), h1SizeVal = document.getElementById("h1SizeVal"), h1Bold = document.getElementById("h1Bold");
+  var h2Size = document.getElementById("h2Size"), h2SizeVal = document.getElementById("h2SizeVal"), h2Bold = document.getElementById("h2Bold");
+  var bSize = document.getElementById("bSize"), bSizeVal = document.getElementById("bSizeVal"), bBold = document.getElementById("bBold");
+
+  h1Size.value = state.typo.h1.size; h1SizeVal.textContent = state.typo.h1.size + "px"; h1Bold.checked = state.typo.h1.bold;
+  h2Size.value = state.typo.h2.size; h2SizeVal.textContent = state.typo.h2.size + "px"; h2Bold.checked = state.typo.h2.bold;
+  bSize.value = state.typo.b.size; bSizeVal.textContent = state.typo.b.size + "px"; bBold.checked = state.typo.b.bold;
+
+  h1Size.addEventListener("input", function(){ state.typo.h1.size = parseInt(h1Size.value,10); h1SizeVal.textContent = h1Size.value + "px"; save(); renderStage(); });
+  h2Size.addEventListener("input", function(){ state.typo.h2.size = parseInt(h2Size.value,10); h2SizeVal.textContent = h2Size.value + "px"; save(); renderStage(); });
+  bSize.addEventListener("input", function(){ state.typo.b.size = parseInt(bSize.value,10); bSizeVal.textContent = bSize.value + "px"; save(); renderStage(); });
+
+  h1Bold.addEventListener("change", function(){ state.typo.h1.bold = h1Bold.checked; save(); renderStage(); });
+  h2Bold.addEventListener("change", function(){ state.typo.h2.bold = h2Bold.checked; save(); renderStage(); });
+  bBold.addEventListener("change", function(){ state.typo.b.bold = bBold.checked; save(); renderStage(); });
+
+  buildColorRow("h1Colors","h1");
+  buildColorRow("h2Colors","h2");
+  buildColorRow("bColors","b");
+}
+
+function renderNewsText(el, text){
+  text = text || "";
+  var parts = text.split("||").map(function(s){ return s.trim(); });
+  var t = state.typo;
+  var html = '<div class="news-inner">';
+  if(parts[0]) html += '<div class="news-h1" style="font-size:'+t.h1.size+'px;font-weight:'+(t.h1.bold?800:600)+';color:'+t.h1.color+';">'+escapeHtml(parts[0])+'</div>';
+  if(parts[1]) html += '<div class="news-h2" style="font-size:'+t.h2.size+'px;font-weight:'+(t.h2.bold?800:600)+';color:'+t.h2.color+';">'+escapeHtml(parts[1])+'</div>';
+  if(parts[2]) html += '<div class="news-b" style="font-size:'+t.b.size+'px;font-weight:'+(t.b.bold?800:500)+';color:'+t.b.color+';">'+escapeHtml(parts[2])+'</div>';
+  if(parts.length === 1) html += '<div class="news-b" style="font-size:'+t.b.size+'px;font-weight:'+(t.b.bold?800:500)+';color:'+t.b.color+';">'+escapeHtml(parts[0])+'</div>';
+  html += '</div>';
+  el.innerHTML = html;
 }function fitText(el){
     el.style.fontSize = "";
     var baseFont = parseFloat(getComputedStyle(el).fontSize) || 16;
