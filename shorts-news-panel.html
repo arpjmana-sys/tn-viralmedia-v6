@@ -784,7 +784,7 @@ height:auto;
     var mediaItem = state.media.find(function(m){ return m.id === s.mediaId; });
     renderMediaInto(stageMedia, mediaItem);
     setupMediaGestures(stageMedia, mediaItem);
-    stageNewsText.textContent = newsItem ? newsItem.text : "";
+    renderNewsText(stageNewsText, newsItem ? newsItem.text : "");
     fitText(stageNewsText);
   }
 
