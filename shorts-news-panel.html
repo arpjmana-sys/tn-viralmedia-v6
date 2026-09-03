@@ -812,7 +812,7 @@ height:auto;
     var mediaItem = state.media.find(function(m){ return m.id === s.mediaId; });
     renderMediaInto(fsMedia, mediaItem);
     setupMediaGestures(fsMedia, mediaItem);
-     fsNewsText.textContent = newsItem ? newsItem.text : "";
+     renderNewsText(fsNewsText, newsItem ? newsItem.text : "");
 fitText(fsNewsText);
 if(newsItem){ setupTextGestures(fsNewsText, newsItem); }
   }
